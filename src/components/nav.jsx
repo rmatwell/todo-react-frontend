@@ -1,24 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Navbar from 'react-bootstrap/Navbar'
+import Nav from 'react-bootstrap/Nav'
+import NavDropdown from 'react-bootstrap/NavDropdown'
 
-export default class Nav extends React.Component {
+export default class NavTop extends React.Component {
     render() {
         return (
-            <nav className="Nav">
-                <div className="Nav__container">
-                    <Link to="/" className="Nav__brand">
-                        <img src="logo192.png" className="Nav__logo" />
-                    </Link>
-
-                    <div className="Nav__right">
-                        <ul className="Nav__item-wrapper">
-                            <li className="Nav__item">
-                                <Link className="Nav__link" to="/">Link 1</Link>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+                <Navbar.Brand href="/">todo</Navbar.Brand>
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                    <Nav className="mr-auto">
+                        <Nav.Link href="/">Home</Nav.Link>
+                        <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                    </Nav>
+                    <Nav>
+                        <NavDropdown title="Settings" id="collasible-nav-dropdown">
+                            <NavDropdown.Item href="/login">Login</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item href="#">Logout</NavDropdown.Item>
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
         );
     }
 }
