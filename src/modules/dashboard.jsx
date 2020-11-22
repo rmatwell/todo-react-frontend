@@ -6,8 +6,13 @@ import styled from 'styled-components';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Droppable } from 'react-beautiful-dnd';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CenterView from '../components/center-view'
 
 const Container = styled.div`
+  display: flex;
+  `
+
+const Board = styled.div`
   display: flex;
   `
 
@@ -107,33 +112,35 @@ export default class Dashboard extends React.Component {
     render() {
         return (
             <div>
-                <DragDropContext
-                    onDragStart={this.onDragStart}
-                    onDragEnd={this.onDragEnd}
-                    onDragUpdate={this.onDragUpdate}>
-                    <Droppable
-                        droppableId="all-columns"
-                        direction="horizontal"
-                        type="column"
-                    >
+                <CenterView>
+                    <DragDropContext
+                        onDragStart={this.onDragStart}
+                        onDragEnd={this.onDragEnd}
+                        onDragUpdate={this.onDragUpdate}>
+                        <Droppable
+                            droppableId="all-columns"
+                            direction="horizontal"
+                            type="column"
+                        >
 
-                        {provided => (
-                            <Container
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                            >
+                            {provided => (
+                                <Container
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                >
 
-                                {this.state.columnOrder.map((columnId, index) => {
-                                    const column = this.state.columns[columnId];
-                                    const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
+                                    {this.state.columnOrder.map((columnId, index) => {
+                                        const column = this.state.columns[columnId];
+                                        const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
 
-                                    return <Column key={column.id} column={column} tasks={tasks} index={index} />;
-                                })}
-                                {provided.placeholder}
-                            </Container>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                                        return <Column key={column.id} column={column} tasks={tasks} index={index} />;
+                                    })}
+                                    {provided.placeholder}
+                                </Container>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                </CenterView>
             </div>
         );
     }
