@@ -113,21 +113,10 @@ export default class Dashboard extends React.Component {
         return (
             <div>
                 <CenterView>
-                    <DragDropContext
-                        onDragStart={this.onDragStart}
-                        onDragEnd={this.onDragEnd}
-                        onDragUpdate={this.onDragUpdate}>
-                        <Droppable
-                            droppableId="all-columns"
-                            direction="horizontal"
-                            type="column"
-                        >
-
+                    <DragDropContext onDragEnd={this.onDragEnd} >
+                        <Droppable droppableId="all-columns" direction="horizontal" type="column">
                             {provided => (
-                                <Container
-                                    {...provided.droppableProps}
-                                    ref={provided.innerRef}
-                                >
+                                <Container {...provided.droppableProps} ref={provided.innerRef}>
 
                                     {this.state.columnOrder.map((columnId, index) => {
                                         const column = this.state.columns[columnId];

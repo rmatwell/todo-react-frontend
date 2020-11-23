@@ -13,6 +13,8 @@ export default class App extends React.Component {
                         <li><Nav.Link href="/dashboard">Dashboard</Nav.Link></li>
                         <li><Nav.Link href="/register">Register</Nav.Link></li>
                         <li><Nav.Link href="/login">Login</Nav.Link></li>
+                        <li><Nav.Link href="/tasklist">TaskList</Nav.Link></li>
+                        <li><Nav.Link href="/board">Board</Nav.Link></li>
                     </ul>
                     {this.props.children}
                 </Nav>
