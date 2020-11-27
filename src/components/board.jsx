@@ -1,95 +1,167 @@
-import React, { Component } from 'react'
-import TaskService from '../services/TaskService'
-import Task from '../Task'
+import React from 'react'
+import ListService from '../services/ListService'
 import Column from '../column'
-import Container from '../column'
 import CenterView from './center-view'
-import Card from 'react-bootstrap/Card'
 import '@atlaskit/css-reset';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Droppable } from 'react-beautiful-dnd';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import styled from 'styled-components';
 
-class Board extends React.Component {
+const Container = styled.div`
+  display: flex;
+ `
+
+export default class Board extends React.Component {
 
     constructor(props) {
         super(props)
 
         this.state = {
-            tasks: []
+            Lists: []
         }
-        this.addTask = this.addTask.bind(this);
-        this.editTask = this.editTask.bind(this);
-        this.deleteTask = this.deleteTask.bind(this);
+        this.addList = this.addList.bind(this);
+        this.editList = this.editList.bind(this);
+        this.deleteList = this.deleteList.bind(this);
     }
 
-    deleteTask(id) {
-        TaskService.deleteTask(id).then(res => {
-            this.setState({ tasks: this.state.tasks.filter(task => task.id !== id) });
+    deleteList(id) {
+        ListService.deleteList(id).then(res => {
+            this.setState({
+                Lists: this.stateLists.filter(List => List.id !== id)
+            });
         });
     }
-    viewTask(id) {
-        this.props.history.push(`/task/${id}`);
+    viewList(id) {
+        this.props.history.push(`list/${id}`);
     }
-    editTask(id) {
-        this.props.history.push(`/task/${id}`);
+    editList(id) {
+        this.props.history.push(`list/${id}`);
     }
 
     componentDidMount() {
-        TaskService.getTasks().then((res) => {
-            this.setState({ tasks: res.data });
+        ListService.getLists().then((res) => {
+            this.setState({ Lists: res.data });
         });
     }
 
-    addTask() {
-        this.props.history.push('/task');
+    addList() {
+        this.props.history.push('List');
     }
+
+    onDragStart = () => {
+        document.body.style.color = 'orange';
+        document.body.style.transition = 'background-color 0.2s ease';
+    }
+
+    onDragUpdate = update => {
+        const { destination, } = update;
+        const opacity = destination
+            ? destination.index / Object.keys(this.stateLists).length
+            : 0;
+        document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`
+    }
+
+    onDragEnd = res => {
+        document.body.style.color = 'inherit';
+        document.body.style.backgroundColor = 'inherit';
+        const { destination, source, draggableId, type } = res;
+
+        if (!destination) {
+            return;
+        }
+
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        if (type === 'column') {
+            const newColumnOrder = Array.from(this.state.Lists);
+            newColumnOrder.splice(source.index, 1);
+            newColumnOrder.splice(destination.index, 0, draggableId);
+
+            const newState = {
+                ...this.state,
+                tasks: newColumnOrder,
+            };
+            this.setState(newState);
+            return;
+        }
+
+        const start = this.state.Lists.tasks;
+        const finish = this.state.Lists.tasks;
+        console.log(res);
+        console.log({ finish });
+
+        if (start === finish) {
+            const newListIds = Array.from(start.id);
+            newListIds.splice(source.index, 1);
+            newListIds.splice(destination.index, 0, draggableId);
+
+            const newColumn = {
+                ...finish,
+                tasks: newListIds,
+            };
+
+            const newState = {
+                ...this.state,
+                Lists: {
+                    ...this.state.Lists,
+                    [newColumn.list]: newColumn,
+                },
+            };
+
+            this.setState(newState);
+            return;
+        }
+
+        const startListIds = Array.from(start.tasks);
+        startListIds.splice(source.index, 1);
+        const newStart = {
+            ...start,
+            tasks: startListIds,
+        };
+
+        const finishListIds = Array.from(finish.tasks);
+        finishListIds.splice(destination.index, 0, draggableId);
+        const newFinish = {
+            ...finish,
+            tasks: finishListIds,
+        };
+
+        const newState = {
+            ...this.state,
+            Lists: {
+                ...this.state.Lists,
+                [newStart.id]: newStart,
+                [newFinish.id]: newFinish,
+            },
+        };
+        this.setState(newState);
+    };
 
     render() {
         return (
-            <CenterView>
-                <div>
-                    <Card>
-                        {
-                            this.state.tasks.map(
-                                task =>
+            <div>
+                <CenterView>
+                    <DragDropContext onDragEnd={this.onDragEnd} >
+                        <Droppable droppableId="all-columns" direction="horizontal" type="column">
+                            {provided => (
+                                <Container {...provided.droppableProps} ref={provided.innerRef}>
 
-                                    <Card>
-                                        <Card.Body>{task.name}</Card.Body>
-                                    </Card>
-                            )
-                        }
-                    </Card>
+                                    {this.state.Lists.map((column, index) => {
+                                        // const column = this.state.Lists[columnId];
+                                        // const tasks = column.taskIds.map(taskId => this.state.tasks);
 
-                </div>
-
-                <div>
-                    <CenterView>
-                        <DragDropContext onDragEnd={this.onDragEnd} >
-                            <Droppable droppableId="Droppable" direction="horizontal" type="task">
-                                {provided => (
-                                    <Task {...provided.droppableProps} ref={provided.innerRef}>
-                                        {
-                                            this.state.tasks.map(
-                                                task =>
-
-                                                    <Card>
-                                                        <Card.Body>{task.name}</Card.Body>
-                                                    </Card>
-                                            )
-                                        }
-                                        {provided.placeholder}
-                                    </Task>
-                                )}
-                            </Droppable>
-                        </DragDropContext>
-                    </CenterView>
-                </div>
-
-            </CenterView>
-
-        )
+                                        return <Column key={column.list} column={column} tasks={column.tasks} index={index} />;
+                                    })}
+                                    {provided.placeholder}
+                                </Container>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                </CenterView>
+            </div>
+        );
     }
 }
-
-export default Board

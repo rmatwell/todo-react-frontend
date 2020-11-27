@@ -67,9 +67,7 @@ class TaskList extends React.Component {
                                         task =>
                                             <tr key={task.id}>
                                                 <td> {task.id} </td>
-                                                <td> {task.name}</td>
-                                                <td> {task.description}</td>
-                                                <td> {task.complete.toString()}</td>
+                                                <td> {task.content}</td>
                                                 <td>
                                                     <button onClick={() =>
                                                         this.editTask(task.id)} className="btn btn-info">Update </button>
@@ -85,50 +83,6 @@ class TaskList extends React.Component {
                         </table>
 
                     </div>
-
-                    <Card>
-
-                    </Card>
-
-                    {/* <div>
-
-                    {
-                        this.state.tasks.map(
-                            task =>
-                                <Task>
-                                    <tr key={task.id}>
-                                        <td> {task.id} </td>
-                                        <td> {task.name}</td>
-                                        <td> {task.description}</td>
-                                        <td> {task.complete}</td>
-                                        <td>
-                                            <button onClick={() =>
-                                                this.editTask(task.id)} className="btn btn-info">Update </button>
-                                            <button style={{ marginLeft: "10px" }} onClick={() =>
-                                                this.deleteTask(task.id)} className="btn btn-danger">Delete </button>
-                                            <button style={{ marginLeft: "10px" }} onClick={() =>
-                                                this.viewTask(task.id)} className="btn btn-info">View </button>
-                                        </td>
-                                    </tr>
-                                </Task>
-                        )
-                    }
-
-                   
-                </div> */}
-
-
-                    <Card>
-                        {
-                            this.state.tasks.map(
-                                task =>
-
-                                    <Card>
-                                        <Card.Body>{task.name}</Card.Body>
-                                    </Card>
-                            )
-                        }
-                    </Card>
 
                 </div>
             </CenterView>
