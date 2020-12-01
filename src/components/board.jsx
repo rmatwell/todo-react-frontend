@@ -18,7 +18,8 @@ export default class Board extends React.Component {
         super(props)
 
         this.state = {
-            Lists: []
+            Lists: [],
+            columnOrder: []
         }
         this.addList = this.addList.bind(this);
         this.editList = this.editList.bind(this);
@@ -41,7 +42,23 @@ export default class Board extends React.Component {
 
     componentDidMount() {
         ListService.getLists().then((res) => {
-            this.setState({ Lists: res.data });
+            this.setState({ Lists: res.data })
+        });
+
+        ListService.getLists().then((res) => {
+            const data = res.data
+            const columns = []
+            console.log(data)
+
+            data.map(col =>
+                columns.push(col.id)
+            )
+
+            console.log(columns)
+
+            this.setState({ columnOrder: columns })
+
+            console.log(this.state.columnOrder)
         });
     }
 
@@ -76,13 +93,13 @@ export default class Board extends React.Component {
         }
 
         if (type === 'column') {
-            const newColumnOrder = Array.from(this.state.Lists);
+            const newColumnOrder = Array.from(this.state.columnOrder);
             newColumnOrder.splice(source.index, 1);
             newColumnOrder.splice(destination.index, 0, draggableId);
 
             const newState = {
                 ...this.state,
-                tasks: newColumnOrder,
+                columnOrder: newColumnOrder,
             };
             this.setState(newState);
             return;
@@ -149,11 +166,11 @@ export default class Board extends React.Component {
                             {provided => (
                                 <Container {...provided.droppableProps} ref={provided.innerRef}>
 
-                                    {this.state.Lists.map((column, index) => {
-                                        // const column = this.state.Lists[columnId];
-                                        // const tasks = column.taskIds.map(taskId => this.state.tasks);
+                                    {this.state.columnOrder.map((columnId, index) => {
+                                        const column = this.state.Lists[columnId];
+                                        const tasks = column.taskIds.map(taskId => this.state.tasks[taskId]);
 
-                                        return <Column key={column.list} column={column} tasks={column.tasks} index={index} />;
+                                        return <Column key={column.id} column={column} tasks={tasks} index={index} />;
                                     })}
                                     {provided.placeholder}
                                 </Container>

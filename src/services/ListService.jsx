@@ -8,6 +8,25 @@ class ListService {
         return axios.get(LIST_API_BASE_URL);
     }
 
+    getListIds() {
+        let columnOrder = [];
+
+        axios
+            .get(LIST_API_BASE_URL)
+            .then(res => {
+                const data = res.data
+                console.log(data)
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+
+
+
+
+
+    }
+
     getListById(ListId) {
         return axios.get(LIST_API_BASE_URL + '/' + ListId);
     }

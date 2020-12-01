@@ -30,7 +30,7 @@ min-height: 100px;
 export default class Column extends React.Component {
   render() {
     return (
-      <Draggable draggableId={this.props.column.list} index={this.props.index}>
+      <Draggable draggableId={this.props.column.id} index={this.props.index}>
         {provided => (
           <Container
             {...provided.draggableProps}
@@ -38,7 +38,7 @@ export default class Column extends React.Component {
           >
             <Title {...provided.dragHandleProps}>
               {this.props.column.title}</Title>
-            <Droppable droppableId={this.props.column.list} type="task">
+            <Droppable droppableId={this.props.column.id} type="task">
               {(provided, snapshot) => (
                 <TaskList
                   ref={provided.innerRef}
